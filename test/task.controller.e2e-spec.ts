@@ -42,21 +42,24 @@ describe('TaskController (e2e)', () => {
     const task1 = await taskService.createTask('foo')
     const task2 = await taskService.createTask('bar')
 
-    return request(app.getHttpServer())
+    const {body} = await request(app.getHttpServer())
       .get('/tasks')
       .expect(200)
-      .expect([
-        task1,
-        task2,
-      ])
+
+    expect(body).toMatchObject([
+      task1,
+      task2,
+    ])
   })
 
   it('get task', async () => {
     const task = await taskService.createTask('foo')
 
-    await request(app.getHttpServer())
+    const { body } = await request(app.getHttpServer())
       .get(`/tasks/${task.id}`)
-      .expect(200, task)
+      .expect(200)
+
+    expect(body).toMatchObject(task)
   })
 
   it('complete task', async () => {

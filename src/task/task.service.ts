@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ITask } from './interfaces/task.interface'
+import { Task } from './model/task.entity'
 
 @Injectable()
 export class TaskService {
-  private tasks: ITask[] = []
+  private tasks: Task[] = []
 
-  async createTask(text: string): Promise<ITask> {
-    const task: ITask = {
-      id: this.tasks.length + 1,
-      text,
-      isCompleted: false,
-    }
+  async createTask(text: string): Promise<Task> {
+    const task = new Task()
+    task.id = this.tasks.length + 1
+    task.text = text
+    task.isCompleted = false
 
     this.tasks.push(task)
 
@@ -31,7 +30,7 @@ export class TaskService {
     task.isCompleted = false
   }
 
-  async listTasks(): Promise<ITask[]> {
+  async listTasks(): Promise<Task[]> {
     return this.tasks
   }s
 }
