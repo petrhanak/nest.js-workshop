@@ -1,6 +1,16 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common'
 import { TaskService } from './task.service'
-import { constants } from 'http2'
 import { CreateTaskDto } from './dto/create-task.dto'
 
 @Controller('tasks')
@@ -25,30 +35,24 @@ export class TaskController {
 
   @Get(':id')
   getTask(
-    @Param('id') id: string
+    @Param('id', ParseIntPipe) id: number
   ) {
-    return this.taskService.getTask(
-      parseInt(id, 10)
-    )
+    return this.taskService.getTask(id)
   }
 
   @Post(':id/complete')
   @HttpCode(HttpStatus.NO_CONTENT)
   async postTaskComplete(
-    @Param('id') id: string
+    @Param('id', ParseIntPipe) id: number
   ) {
-    await this.taskService.completeTask(
-      parseInt(id, 10)
-    )
+    await this.taskService.completeTask(id)
   }
 
   @Post(':id/uncomplete')
   @HttpCode(HttpStatus.NO_CONTENT)
   async postTaskUncomplete(
-    @Param('id') id: string
+    @Param('id', ParseIntPipe) id: number
   ) {
-    await this.taskService.uncompleteTask(
-      parseInt(id, 10)
-    )
+    await this.taskService.uncompleteTask(id)
   }
 }
