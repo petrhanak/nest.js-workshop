@@ -1,8 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common'
 import { TaskService } from './task.service'
 import { constants } from 'http2'
+import { CreateTaskDto } from './dto/create-task.dto'
 
 @Controller('tasks')
+@UsePipes(new ValidationPipe())
 export class TaskController {
   constructor(
     private readonly taskService: TaskService
@@ -11,11 +13,10 @@ export class TaskController {
 
   @Post()
   postTask(
-    @Body() body: any
+    @Body() body: CreateTaskDto
   ) {
     return this.taskService.createTask(body.text)
   }
-
 
   @Get()
   getTasks() {

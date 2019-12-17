@@ -31,6 +31,15 @@ describe('TaskController (e2e)', () => {
       })
   })
 
+  it('create task fails with invalid body', async () => {
+    await request(app.getHttpServer())
+      .post(`/tasks`)
+      .send({ text: {
+        someWeirdData: 'nope'
+        } })
+      .expect(400)
+  })
+
   it('list empty tasks', async () => {
     return request(app.getHttpServer())
       .get('/tasks')
