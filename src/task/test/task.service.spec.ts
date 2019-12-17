@@ -1,17 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TaskModule } from '../task.module';
 import { TaskService } from '../task.service'
+import { INestApplication } from '@nestjs/common'
+import { Connection } from 'typeorm'
+import { AppModule } from '../../app.module'
 
 describe('TaskService', () => {
+  let databaseConnection: Connection
+  let app: TestingModule
   let taskService: TaskService;
 
-  beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      imports: [TaskModule],
+  beforeAll(async () => {
+    app = await Test.createTestingModule({
+      imports: [AppModule],
     }).compile();
 
+    databaseConnection = app.get<Connection>('Connection')
     taskService = app.get<TaskService>(TaskService);
   });
+
+  beforeEach(async () => {
+    await databaseConnection.synchronize(true)
+  })
+
+  afterAll(async () => {
+    await databaseConnection.close()
+  })
 
   it('create task', async () => {
     const text = 'Hey'

@@ -1,36 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { Task } from './model/task.entity'
+import { TaskRepository } from './task.repository'
 
 @Injectable()
 export class TaskService {
-  private tasks: Task[] = []
+  constructor(
+    private readonly taskRepository: TaskRepository,
+  ) {
+  }
 
   async createTask(text: string): Promise<Task> {
-    const task = new Task()
-    task.id = this.tasks.length + 1
-    task.text = text
-    task.isCompleted = false
-
-    this.tasks.push(task)
+    const task = await this.taskRepository.saveTask(text, false)
 
     return task
   }
 
   async getTask(id: number) {
-    return this.tasks.find(t => t.id === id)
+    return this.taskRepository.findOne(id)
   }
 
   async completeTask(id: number): Promise<void> {
-    const task = await this.getTask(id)
-    task.isCompleted = true
+    await this.taskRepository.update(id, {
+      isCompleted: true,
+    })
   }
 
   async uncompleteTask(id: number): Promise<void> {
-    const task = await this.getTask(id)
-    task.isCompleted = false
+    await this.taskRepository.update(id, {
+      isCompleted: false,
+    })
   }
 
   async listTasks(): Promise<Task[]> {
-    return this.tasks
+    return this.taskRepository.find()
   }s
 }

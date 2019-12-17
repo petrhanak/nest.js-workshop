@@ -4,13 +4,15 @@ import { AppModule } from './../src/app.module'
 import { TaskService } from '../src/task/task.service'
 import { UserService } from '../src/user/user.service'
 import { UserServiceMock } from '../src/user/user.service.mock'
+import { Connection } from 'typeorm'
 
 
 describe('TaskController (e2e)', () => {
+  let databaseConnection: Connection
   let taskService: TaskService
   let app
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
@@ -18,11 +20,19 @@ describe('TaskController (e2e)', () => {
       .useClass(UserServiceMock)
       .compile()
 
+    databaseConnection = moduleFixture.get('Connection')
     taskService = moduleFixture.get(TaskService)
     app = moduleFixture.createNestApplication()
     await app.init()
   })
 
+  beforeEach(async () => {
+    await databaseConnection.synchronize(true)
+  })
+
+  afterAll(async () => {
+    await databaseConnection.close()
+  })
 
   it('create task', async () => {
     const text = 'Hey'
