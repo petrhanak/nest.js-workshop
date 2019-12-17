@@ -12,6 +12,8 @@ import {
 } from '@nestjs/common'
 import { TaskService } from './task.service'
 import { CreateTaskDto } from './dto/create-task.dto'
+import { ApiNoContentResponse, ApiOkResponse } from '@nestjs/swagger'
+import { Task } from './model/task.entity'
 
 @Controller('tasks')
 @UsePipes(new ValidationPipe())
@@ -22,6 +24,7 @@ export class TaskController {
   }
 
   @Post()
+  @ApiOkResponse({ type: Task })
   postTask(
     @Body() body: CreateTaskDto
   ) {
@@ -34,6 +37,7 @@ export class TaskController {
   }
 
   @Get(':id')
+  @ApiOkResponse({ type: Task })
   getTask(
     @Param('id', ParseIntPipe) id: number
   ) {
@@ -42,6 +46,7 @@ export class TaskController {
 
   @Post(':id/complete')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
   async postTaskComplete(
     @Param('id', ParseIntPipe) id: number
   ) {
@@ -50,6 +55,7 @@ export class TaskController {
 
   @Post(':id/uncomplete')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
   async postTaskUncomplete(
     @Param('id', ParseIntPipe) id: number
   ) {
