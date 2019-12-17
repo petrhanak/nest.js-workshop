@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing'
 import * as request from 'supertest'
 import { AppModule } from './../src/app.module'
 import { TaskService } from '../src/task/task.service'
+import { UserService } from '../src/user/user.service'
+import { UserServiceMock } from '../src/user/user.service.mock'
+
 
 describe('TaskController (e2e)', () => {
   let taskService: TaskService
@@ -10,7 +13,10 @@ describe('TaskController (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile()
+    })
+      .overrideProvider(UserService)
+      .useClass(UserServiceMock)
+      .compile()
 
     taskService = moduleFixture.get(TaskService)
     app = moduleFixture.createNestApplication()
@@ -20,9 +26,11 @@ describe('TaskController (e2e)', () => {
 
   it('create task', async () => {
     const text = 'Hey'
+    const token = UserServiceMock.createToken('foo', 'bar')
 
     await request(app.getHttpServer())
       .post(`/tasks`)
+      .set('authorization', `Basic ${token}`)
       .send({ text })
       .expect(201, {
         id: 1,
@@ -32,8 +40,11 @@ describe('TaskController (e2e)', () => {
   })
 
   it('create task fails with invalid body', async () => {
+    const token = UserServiceMock.createToken('foo', 'bar')
+
     await request(app.getHttpServer())
       .post(`/tasks`)
+      .set('authorization', `Basic ${token}`)
       .send({ text: {
         someWeirdData: 'nope'
         } })

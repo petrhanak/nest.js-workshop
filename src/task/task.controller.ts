@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
-  Post,
+  Post, UseGuards,
   UsePipes,
   ValidationPipe
 } from '@nestjs/common'
@@ -14,6 +14,7 @@ import { TaskService } from './task.service'
 import { CreateTaskDto } from './dto/create-task.dto'
 import { ApiNoContentResponse, ApiOkResponse } from '@nestjs/swagger'
 import { Task } from './model/task.entity'
+import { AuthGuard } from '@nestjs/passport'
 
 @Controller('tasks')
 @UsePipes(new ValidationPipe())
@@ -23,6 +24,7 @@ export class TaskController {
   ) {
   }
 
+  @UseGuards(AuthGuard('basic'))
   @Post()
   @ApiOkResponse({ type: Task })
   postTask(
