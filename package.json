@@ -17,7 +17,7 @@
     "@nestjs/platform-express": "^6.7.2",
     "@nestjs/swagger": "^4.0.9",
     "@nestjs/typeorm": "^6.2.0",
-    "apollo-server-express": "^2.9.13",
+    "apollo-server-express": "^2.14.2",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.11.0",
     "graphql": "^14.5.8",
